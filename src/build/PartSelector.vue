@@ -8,16 +8,6 @@
 </template>
 
 <script>
-    function getPreviousValidIndex(index, length) {
-        const deprecatedIndex = index - 1;
-        return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
-    }
-
-    function getNextValidIndex(index, length) {
-        const incrementedIndex = index + 1;
-        return incrementedIndex > length - 1 ? 0 : incrementedIndex;
-    }
-
     export default {
         props: ['parts', 'position'],
         data() {
@@ -34,18 +24,27 @@
         },
         methods: {
             selectNextPart() {
-                this.selectedPartIndex = getNextValidIndex(
+                this.selectedPartIndex = this.getNextValidIndex(
                     this.selectedPartIndex,
                     this.parts.length,
                 );
             },
             selectPreviousPart() {
-                this.selectedPartIndex = getPreviousValidIndex(
+                this.selectedPartIndex = this.getPreviousValidIndex(
                     this.selectedPartIndex,
                     this.parts.length,
                 );
             },
+            getPreviousValidIndex(index, length) {
+                const deprecatedIndex = index - 1;
 
+                return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
+            },
+            getNextValidIndex(index, length) {
+                const incrementedIndex = index + 1;
+
+                return incrementedIndex > length - 1 ? 0 : incrementedIndex;
+            }
         },
     };
 </script>
