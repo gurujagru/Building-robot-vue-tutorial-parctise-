@@ -1,34 +1,29 @@
 <template>
     <div class="content">
-        <button class="add-to-cart" @click="addToCart()">Add to Cart</button>
+        <button class="add-to-cart" :style="counter ? styleCounter : null" @click="addToCart">Add to Cart</button>
+        <button class="reset-cart" @click="resetCart">Reset Cart</button>
         <div class="top-row">
-            <!--<div class="robot-name">
-                {{selectedRobot.head.title}}
-                <span v-show="selectedRobot.head.onSale"
-                      class="sale">Sale!</span>
-            </div>
-        </div>-->
-            <PartSelector
+            <part-selector
                 :parts="availableParts.heads"
                 position="top"
                 @selectPart="selectPart"/>
         </div>
         <div class="middle-row">
-            <PartSelector
+            <part-selector
                 :parts="availableParts.arms"
                 position="left"
                 @selectPart="selectPart"/>
-            <PartSelector
+            <part-selector
                 :parts="availableParts.torsos"
                 position="center"
                 @selectPart="selectPart"/>
-            <PartSelector
+            <part-selector
                 :parts="availableParts.arms"
                 position="right"
                 @selectPart="selectPart"/>
         </div>
         <div class="bottom-row">
-            <PartSelector
+            <part-selector
                 :parts="availableParts.bases"
                 position="bottom"
                 @selectPart="selectPart"/>
@@ -73,6 +68,7 @@ export default {
               base: {},
               cost: {},
           },
+          counter: 0,
       };
   },
   mixins: [createdHookMixin],
@@ -80,18 +76,31 @@ export default {
       saleOrderClass() {
           return this.selectedRobot.head.onSale ? 'sale-border' : '';
           },
-
+      styleCounter() {
+          return {
+              '--content': '"' + this.counter + '"',
+              '--display': 'inline-block'
+          };
+          //return '--content: "' + this.counter + '";';
+      }
   },
   methods: {
       addToCart() {
           const robot = this.selectedRobot;
           const cost = robot.head.cost +
-                            robot.leftArm.cost +
-                            robot.torso.cost +
-                            robot.rightArm.cost +
-                            robot.base.cost;
+                       robot.leftArm.cost +
+                       robot.torso.cost +
+                       robot.rightArm.cost +
+                       robot.base.cost;
           this.cart.push(Object.assign({}, robot, { cost }));
-    },
+
+          this.counter++;
+          console.log(this.counter);
+      },
+      resetCart() {
+          this.cart = [];
+          this.counter = 0;
+      },
       selectPart(part, position) {
           let arms = ["left", "right"];
           if (arms.includes(position)) {
@@ -101,7 +110,7 @@ export default {
           }
 
           this.selectedRobot[part.type] = part;
-      }
+      },
   },
 };
 </script>
@@ -213,8 +222,34 @@ export default {
     }
     .add-to-cart {
         position: absolute;
-        right: 30px;
-        width: 220px;
+        right: 150px;
+        width: 110px;
+        padding: 3px;
+        font-size: 16px;
+        --content: "";
+        --display: none;
+
+        &::after {
+            display: var(--display);
+            content: var(--content);
+            color: red;
+            margin-left: 7px;
+            position: absolute;
+            top: -24px;
+            right: -10px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 4px;
+            border: 1px solid lightgray;
+            height: 16px;
+            width: 16px;
+            transform: scale(1.2);
+        }
+    }
+    .reset-cart {
+        position: absolute;
+        right: 5px;
+        width: 110px;
         padding: 3px;
         font-size: 16px;
     }
