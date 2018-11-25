@@ -1,8 +1,8 @@
 <template>
     <div class="part" :class="position">
         <img :src="selectedPart.src" title="arm"/>
-        <button @click="selectPreviousPart()" class="prev-selector"></button>
-        <button @click="selectNextPart()" class="next-selector"></button>
+        <button @click="selectPreviousPart" class="prev-selector"></button>
+        <button @click="selectNextPart" class="next-selector"></button>
         <span class="sale" v-show="selectedPart.onSale">Sale!</span>
     </div>
 </template>
@@ -21,10 +21,14 @@
     export default {
         props: ['parts', 'position'],
         data() {
-            return { selectedPartIndex: 0 };
+            return {
+                selectedPartIndex: 0
+            };
         },
         computed: {
             selectedPart() {
+                this.$emit('selectPart', this.parts[this.selectedPartIndex], this.position);
+
                 return this.parts[this.selectedPartIndex];
             },
         },

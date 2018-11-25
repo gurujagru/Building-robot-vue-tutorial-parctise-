@@ -8,21 +8,30 @@
                       class="sale">Sale!</span>
             </div>
         </div>-->
-            <PartSelector :parts="availableParts.heads"
-            position="top"/>
+            <PartSelector
+                :parts="availableParts.heads"
+                position="top"
+                @selectPart="selectPart"/>
         </div>
         <div class="middle-row">
-            <PartSelector :parts="availableParts.arms"
-               position="left"/>
-            <PartSelector :parts="availableParts.torsos"
-               position="center"/>
-            <PartSelector :parts="availableParts.arms"
-               position="right"/>
+            <PartSelector
+                :parts="availableParts.arms"
+                position="left"
+                @selectPart="selectPart"/>
+            <PartSelector
+                :parts="availableParts.torsos"
+                position="center"
+                @selectPart="selectPart"/>
+            <PartSelector
+                :parts="availableParts.arms"
+                position="right"
+                @selectPart="selectPart"/>
         </div>
         <div class="bottom-row">
-            <PartSelector :parts="availableParts.bases"
-              position="bottom"
-            />
+            <PartSelector
+                :parts="availableParts.bases"
+                position="bottom"
+                @selectPart="selectPart"/>
         </div>
         <div>
             <h1>Cart</h1>
@@ -62,25 +71,37 @@ export default {
               rightArm: {},
               torso: {},
               base: {},
+              cost: {},
           },
       };
   },
   mixins: [createdHookMixin],
   computed: {
-    saleOrderClass() {
-      return this.selectedRobot.head.onSale ? 'sale-border' : '';
-    },
+      saleOrderClass() {
+          return this.selectedRobot.head.onSale ? 'sale-border' : '';
+          },
+
   },
   methods: {
-    addToCart() {
-      const robot = this.selectedRobot;
-      const cost = robot.head.cost +
-                        robot.leftArm.cost +
-                        robot.torso.cost +
-                        robot.rightArm.cost +
-                        robot.base.cost;
-      this.cart.push(Object.assign({}, robot, { cost }));
+      addToCart() {
+          const robot = this.selectedRobot;
+          const cost = robot.head.cost +
+                            robot.leftArm.cost +
+                            robot.torso.cost +
+                            robot.rightArm.cost +
+                            robot.base.cost;
+          this.cart.push(Object.assign({}, robot, { cost }));
     },
+      selectPart(part, position) {
+          let arms = ["left", "right"];
+          if (arms.includes(position)) {
+              this.selectedRobot[position + part.type.charAt(0).toUpperCase() + part.type.slice(1)] = part;
+
+              return;
+          }
+
+          this.selectedRobot[part.type] = part;
+      }
   },
 };
 </script>
@@ -199,8 +220,7 @@ export default {
     }
     td, th {
         text-align: left;
-        padding: 5px;
-        padding-right: 20px;
+        padding: 5px 20px 5px 5px;
     }
     .cost {
         text-align: right;
