@@ -31,14 +31,14 @@
         <div>
             <h1>Cart</h1>
             <table>
-                <thead>
+                <thead v-if="counter">
                 <tr>
                     <th>Robot</th>
-                    <th class="cost"></th>
+                    <th class="cost">Cost</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(robot, index) in cart" :key="index">
+                    <tr :id="'cart' + index" v-for="(robot, index) in cart" :key="index" @click="removeRow(index)">
                         <td>{{robot.head.title}}</td>
                         <td class="cost">{{robot.cost}}</td>
                     </tr>
@@ -81,7 +81,6 @@ export default {
               '--content': '"' + this.counter + '"',
               '--display': 'inline-block'
           };
-          //return '--content: "' + this.counter + '";';
       }
   },
   methods: {
@@ -95,7 +94,6 @@ export default {
           this.cart.push(Object.assign({}, robot, { cost }));
 
           this.counter++;
-          console.log(this.counter);
       },
       resetCart() {
           this.cart = [];
@@ -111,6 +109,11 @@ export default {
 
           this.selectedRobot[part.type] = part;
       },
+      removeRow(index) {
+          let row = document.getElementById('cart' + index);
+          row.style.display = "none";
+          this.counter--;
+      }
   },
 };
 </script>
@@ -253,14 +256,37 @@ export default {
         padding: 3px;
         font-size: 16px;
     }
+    table {
+        border-collapse: collapse;
+    }
+    thead {
+        tr::after {
+            content: "";
+        }
+    }
     td, th {
         text-align: left;
         padding: 5px 20px 5px 5px;
+    }
+    tr {
+        border: 1px solid black;
+        pointer-events: none;
+        &::after {
+            content: "\00d7";
+            margin-right: 5px;
+            pointer-events: all;
+        }
+    }
+    tr:hover {
+        cursor: pointer;
     }
     .cost {
         text-align: right;
     }
     .sale-border {
         border: 3px solid red;
+    }
+    .active {
+        display: none;
     }
 </style>
