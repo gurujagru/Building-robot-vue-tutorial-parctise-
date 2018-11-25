@@ -29,18 +29,21 @@
                 @selectPart="selectPart"/>
         </div>
         <div>
-            <h1>Cart</h1>
+            <div class="cart-total">
+                <h1>Cart</h1>
+                <span class="total-cost">Total: <span>{{ totalCost }}</span></span>
+            </div>
             <table>
                 <thead v-if="counter">
-                <tr>
-                    <th>Robot</th>
-                    <th class="cost">Cost</th>
-                </tr>
+                    <tr>
+                        <th>Robot</th>
+                        <th class="cost">Cost</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr :id="'cart' + index" v-for="(robot, index) in cart" :key="index" @click="removeRow(index)">
+                    <tr :id="'cart' + index" v-for="(robot, index) in cart" :key="index" @click="removeRow(index, robot.cost)">
                         <td>{{robot.head.title}}</td>
-                        <td class="cost">{{robot.cost}}</td>
+                        <td class="cost">{{ robot.cost }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -69,18 +72,24 @@ export default {
               cost: {},
           },
           counter: 0,
+          totalCost: 0
       };
   },
   mixins: [createdHookMixin],
   computed: {
       saleOrderClass() {
           return this.selectedRobot.head.onSale ? 'sale-border' : '';
-          },
+      },
       styleCounter() {
           return {
               '--content': '"' + this.counter + '"',
               '--display': 'inline-block'
           };
+      },
+      calculateTotalCost(robotCost) {
+          this.cost = this.cost + robotCost;
+
+          return this.cost;
       }
   },
   methods: {
@@ -92,12 +101,13 @@ export default {
                        robot.rightArm.cost +
                        robot.base.cost;
           this.cart.push(Object.assign({}, robot, { cost }));
-
+          this.totalCost += cost;
           this.counter++;
       },
       resetCart() {
           this.cart = [];
           this.counter = 0;
+          this.totalCost = 0;
       },
       selectPart(part, position) {
           let arms = ["left", "right"];
@@ -109,10 +119,11 @@ export default {
 
           this.selectedRobot[part.type] = part;
       },
-      removeRow(index) {
+      removeRow(index, robotCost) {
           let row = document.getElementById('cart' + index);
           row.style.display = "none";
           this.counter--;
+          this.totalCost -= robotCost;
       }
   },
 };
@@ -288,5 +299,19 @@ export default {
     }
     .active {
         display: none;
+    }
+    .total-cost {
+        font-size: 1.5rem;
+        display: inline-block;
+        position: relative;
+        padding: 25px;
+
+        span {
+            color: #ff5694;
+        }
+    }
+    .cart-total {
+        display: flex;
+        justify-content: flex-start;
     }
 </style>
